@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Voice } from '@elevenlabs/node';
+import { ElevenLabsClient, play } from 'elevenlabs';
 import { Mic, Play, Save, Type, Loader2 } from 'lucide-react';
 
 function App() {
@@ -40,12 +40,12 @@ function App() {
 
     try {
       const chunks = splitTextIntoChunks(text);
-      const voice = new Voice({
-        apiKey: import.meta.env.VITE_ELEVENLABS_API_KEY
-      });
-
+      const client = new ElevenLabsClient({
+        apiKey: 'YOUR_API_KEY',
+    });
+      
       for (const chunk of chunks) {
-        const audio = await voice.textToSpeech("nPczCjzI2devNBz1zQrb", {
+        const audio = await client.textToSpeech.convert("nPczCjzI2devNBz1zQrb", {
           text: chunk,
           modelId: "eleven_flash_v2_5",
           outputFormat: "mp3_44100_128",
