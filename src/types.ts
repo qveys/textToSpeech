@@ -6,10 +6,13 @@ export interface ChunkStatus {
   id: number;
   text: string;
   status: 'pending' | 'processing' | 'completed' | 'error';
-  audio?: ArrayBuffer;
+  audioUrl: string | null;
 }
 
 export interface APIError {
-  message: string;
-  status?: number;
+  detail?: {
+    status: string;
+    message: string;
+  };
+  message?: string;
 }

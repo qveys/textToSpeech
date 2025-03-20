@@ -1,18 +1,48 @@
-export function splitTextIntoChunks(text: string, maxLength: number = 500): string[] {
-  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+/**
+ * Splits text into manageable chunks for processing
+ * @param text Text to split into chunks
+ * @returns Array of text chunks
+ */
+export function splitTextIntoChunks(text: string): string[] {
+  const MAX_LENGTH = 500;
+  
+  // Trim the text and handle empty input
+  const trimmedText = text.trim();
+  if (!trimmedText) return [];
+
+  // Split text into words
+  const words = trimmedText.split(/\s+/);
   const chunks: string[] = [];
   let currentChunk = '';
 
-  for (const sentence of sentences) {
-    if ((currentChunk + sentence).length <= maxLength) {
-      currentChunk += sentence;
+  for (const word of words) {
+    // If adding this word would exceed maxLength, save current chunk and start new one
+    if (currentChunk.length + word.length + 1 > MAX_LENGTH) {
+      if (currentChunk) {
+        chunks.push(currentChunk.trim());
+      }
+      // If a single word is longer than maxLength, split it
+      if (word.length > MAX_LENGTH) {
+        let remainingWord = word;
+        while (remainingWord.length > MAX_LENGTH) {
+          chunks.push(remainingWord.slice(0, MAX_LENGTH));
+          remainingWord = remainingWord.slice(MAX_LENGTH);
+        }
+        currentChunk = remainingWord;
+      } else {
+        currentChunk = word;
+      }
     } else {
-      if (currentChunk) chunks.push(currentChunk.trim());
-      currentChunk = sentence;
+      // Add word to current chunk
+      currentChunk = currentChunk ? `${currentChunk} ${word}` : word;
     }
   }
 
-  if (currentChunk) chunks.push(currentChunk.trim());
+  // Add the last chunk if it exists
+  if (currentChunk) {
+    chunks.push(currentChunk.trim());
+  }
+
   return chunks;
 }
 
